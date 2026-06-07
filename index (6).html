@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexLib — Smart Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0d0d0f;
+    --cream: #f5f0e8;
+    --warm: #ede7d9;
+    --gold: #c9a84c;
+    --gold-light: #f0d58a;
+    --rust: #8b3a2a;
+    --forest: #1e3a2f;
+    --forest-light: #2d5242;
+    --muted: #6b6459;
+    --paper: #faf7f2;
+    --white: #ffffff;
+    --shadow: rgba(13,13,15,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── PAGES ─── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(245,240,232,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 900;
+    color: var(--forest);
+    letter-spacing: -0.02em;
+    cursor: pointer;
+  }
+  .nav-logo span { color: var(--gold); }
+
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-link {
+    font-size: 0.875rem; font-weight: 500; color: var(--muted);
+    cursor: pointer; transition: color 0.2s;
+    text-decoration: none; letter-spacing: 0.02em;
+    background: none; border: none; font-family: inherit;
+  }
+  .nav-link:hover { color: var(--forest); }
+  .nav-link.active-link { color: var(--forest); font-weight: 600; }
+
+  .ai-btn-nav {
+    background: var(--forest);
+    color: var(--gold-light);
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 100px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .ai-btn-nav:hover { background: var(--forest-light); transform: translateY(-1px); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 64px 0 0;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    padding: 4rem 3rem 4rem 4rem;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 0.35rem 1rem;
+    border-radius: 100px;
+    font-size: 0.75rem; font-weight: 600;
+    color: var(--rust); letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .eyebrow-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold); animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 900; line-height: 1.05;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+  }
+  .hero-title em { font-style: italic; color: var(--forest); }
+
+  .hero-sub {
+    font-size: 1.05rem; color: var(--muted);
+    line-height: 1.7; max-width: 440px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .btn-primary {
+    background: var(--forest);
+    color: var(--gold-light);
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 600;
+    padding: 0.85rem 2rem;
+    border-radius: 100px;
+    transition: all 0.25s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover {
+    background: var(--forest-light); transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(30,58,47,0.3);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--forest);
+    border: 1.5px solid var(--forest);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; font-weight: 600;
+    padding: 0.85rem 2rem;
+    border-radius: 100px;
+    transition: all 0.25s;
+  }
+  .btn-outline:hover { background: var(--forest); color: var(--gold-light); }
+
+  .hero-stats {
+    display: flex; gap: 2rem; margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(201,168,76,0.3);
+  }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem; font-weight: 700; color: var(--forest);
+  }
+  .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.1rem; }
+
+  .hero-right {
+    background: var(--forest);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    padding: 4rem 3rem;
+  }
+
+  .hero-pattern {
+    position: absolute; inset: 0; opacity: 0.06;
+    background-image: repeating-linear-gradient(
+      45deg, var(--gold) 0, var(--gold) 1px,
+      transparent 0, transparent 50%
+    );
+    background-size: 20px 20px;
+  }
+
+  .books-showcase {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1rem; position: relative; z-index: 1;
+    max-width: 340px;
+  }
+
+  .book-spine {
+    background: var(--cream);
+    border-radius: 8px 4px 4px 8px;
+    padding: 1.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .book-spine::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 6px; border-radius: 8px 0 0 8px;
+  }
+  .book-spine.bs-1::before { background: var(--gold); }
+  .book-spine.bs-2::before { background: var(--rust); }
+  .book-spine.bs-3::before { background: #4a7c6f; }
+  .book-spine.bs-4::before { background: #7c5a4a; }
+
+  .book-spine:hover { transform: translateY(-4px) rotate(-1deg); }
+
+  .bs-genre {
+    font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.5rem;
+  }
+  .bs-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem; font-weight: 700; line-height: 1.3;
+    color: var(--ink);
+  }
+  .bs-author { font-size: 0.72rem; color: var(--muted); margin-top: 0.5rem; }
+
+  /* ─── SECTIONS ─── */
+  .section { padding: 5rem 4rem; }
+  .section-label {
+    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); font-weight: 700; margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.25rem; font-weight: 700; color: var(--ink);
+    line-height: 1.2; margin-bottom: 0.75rem;
+  }
+  .section-sub { color: var(--muted); font-size: 1rem; max-width: 520px; line-height: 1.6; }
+
+  /* ─── BROWSE PAGE ─── */
+  #browse-page {
+    background: var(--paper);
+    padding-top: 64px;
+  }
+
+  .browse-header {
+    background: var(--forest);
+    padding: 3rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .browse-header::after {
+    content: '';
+    position: absolute; inset: 0; opacity: 0.05;
+    background-image: repeating-linear-gradient(
+      45deg, var(--gold) 0, var(--gold) 1px,
+      transparent 0, transparent 40%
+    );
+    background-size: 16px 16px;
+  }
+
+  .browse-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.25rem; font-weight: 900; color: var(--gold-light);
+    position: relative; z-index: 1; margin-bottom: 0.5rem;
+  }
+  .browse-sub { color: rgba(240,213,138,0.7); font-size: 0.95rem; position: relative; z-index: 1; }
+
+  .search-bar-wrap {
+    padding: 2rem 4rem;
+    background: var(--white);
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+    display: flex; gap: 1rem; align-items: center;
+    position: sticky; top: 64px; z-index: 50;
+  }
+
+  .search-input-wrap {
+    flex: 1; position: relative;
+  }
+  .search-icon {
+    position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+    color: var(--muted); font-size: 1.1rem; pointer-events: none;
+  }
+  .search-input {
+    width: 100%; height: 48px;
+    padding: 0 1rem 0 3rem;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; color: var(--ink);
+    background: var(--cream);
+    outline: none; transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--forest); background: var(--white); }
+  .search-input::placeholder { color: var(--muted); }
+
+  .filter-tabs { display: flex; gap: 0.5rem; }
+  .filter-tab {
+    padding: 0.5rem 1.1rem;
+    border-radius: 100px;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; font-weight: 600;
+    color: var(--muted); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-tab:hover { border-color: var(--forest); color: var(--forest); }
+  .filter-tab.active { background: var(--forest); color: var(--gold-light); border-color: var(--forest); }
+
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 2.5rem 4rem;
+  }
+
+  .book-card {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.07);
+    cursor: pointer; transition: all 0.3s;
+  }
+  .book-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px var(--shadow); }
+
+  .book-cover {
+    height: 180px;
+    display: flex; align-items: flex-end;
+    padding: 1.25rem;
+    position: relative; overflow: hidden;
+  }
+  .book-cover-bg {
+    position: absolute; inset: 0;
+    opacity: 0.9;
+  }
+  .book-cover-pattern {
+    position: absolute; inset: 0;
+    opacity: 0.15;
+    background-image: repeating-linear-gradient(
+      60deg, rgba(255,255,255,0.5) 0, rgba(255,255,255,0.5) 1px,
+      transparent 0, transparent 50%
+    );
+    background-size: 14px 14px;
+  }
+  .book-cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; font-weight: 700;
+    color: white; position: relative; z-index: 1;
+    line-height: 1.3; text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .book-meta { padding: 1rem; }
+  .book-author-name { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.5rem; }
+  .book-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .book-tag {
+    font-size: 0.68rem; font-weight: 600;
+    padding: 0.2rem 0.6rem; border-radius: 100px;
+    background: rgba(30,58,47,0.08); color: var(--forest);
+    letter-spacing: 0.03em;
+  }
+  .book-read-btn {
+    width: 100%; margin-top: 0.75rem;
+    padding: 0.55rem;
+    background: var(--forest); color: var(--gold-light);
+    border: none; border-radius: 8px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; font-weight: 600;
+    transition: all 0.2s; letter-spacing: 0.03em;
+  }
+  .book-read-btn:hover { background: var(--forest-light); }
+
+  .no-results {
+    grid-column: 1 / -1;
+    text-align: center; padding: 4rem 2rem;
+    color: var(--muted);
+  }
+  .no-results-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+
+  /* ─── CLAUDE AI SIDE PANEL ─── */
+  .gemini-panel {
+    position: fixed;
+    top: 64px; right: -420px; bottom: 0;
+    width: 400px; max-width: 95vw;
+    background: var(--paper);
+    border-left: 1px solid rgba(201,168,76,0.3);
+    z-index: 200;
+    display: flex; flex-direction: column;
+    transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: -8px 0 32px rgba(13,13,15,0.15);
+  }
+  .gemini-panel.open { right: 0; }
+
+  .gemini-panel-header {
+    background: var(--forest);
+    padding: 1rem 1.25rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .gemini-header-left { display: flex; align-items: center; gap: 0.75rem; }
+  .gemini-logo {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, #c9a84c, #f0d58a);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .gemini-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold-light); font-size: 1rem; font-weight: 700;
+  }
+  .gemini-sub { color: rgba(240,213,138,0.6); font-size: 0.72rem; margin-top: 1px; }
+  .gemini-close {
+    background: none; border: none; cursor: pointer;
+    color: rgba(240,213,138,0.7); font-size: 1.1rem;
+    width: 30px; height: 30px; display: flex;
+    align-items: center; justify-content: center;
+    border-radius: 50%; transition: background 0.2s;
+  }
+  .gemini-close:hover { background: rgba(255,255,255,0.12); color: var(--gold-light); }
+
+  /* Chat messages area */
+  .claude-messages {
+    flex: 1; overflow-y: auto;
+    padding: 1rem;
+    display: flex; flex-direction: column; gap: 0.85rem;
+    background: var(--paper);
+  }
+  .claude-messages::-webkit-scrollbar { width: 4px; }
+  .claude-messages::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 4px; }
+
+  .claude-welcome {
+    text-align: center; padding: 1.5rem 1rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+  }
+  .claude-welcome-icon { font-size: 2.5rem; }
+  .claude-welcome-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem; color: var(--ink); font-weight: 700;
+  }
+  .claude-welcome-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+  .claude-chip-row {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-top: 0.25rem;
+  }
+  .claude-chip {
+    font-size: 0.7rem; font-weight: 600;
+    padding: 0.3rem 0.7rem; border-radius: 100px;
+    border: 1px solid rgba(30,58,47,0.25);
+    background: var(--white); color: var(--forest);
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .claude-chip:hover { background: var(--forest); color: var(--gold-light); border-color: var(--forest); }
+
+  .claude-msg {
+    display: flex; gap: 0.6rem; align-items: flex-start;
+    animation: msgSlide 0.3s ease;
+  }
+  @keyframes msgSlide {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .claude-msg.user { flex-direction: row-reverse; }
+
+  .claude-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;
+  }
+  .claude-avatar.ai { background: linear-gradient(135deg, var(--forest), var(--forest-light)); color: var(--gold-light); }
+  .claude-avatar.user { background: rgba(201,168,76,0.2); color: var(--forest); }
+
+  .claude-bubble {
+    padding: 0.65rem 0.9rem;
+    border-radius: 12px;
+    font-size: 0.84rem;
+    line-height: 1.65;
+    max-width: calc(100% - 40px);
+    word-break: break-word;
+  }
+  .claude-msg.ai .claude-bubble {
+    background: var(--white);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 3px 12px 12px 12px;
+    color: var(--ink);
+  }
+  .claude-msg.user .claude-bubble {
+    background: var(--forest);
+    color: var(--gold-light);
+    border-radius: 12px 3px 12px 12px;
+  }
+  .claude-bubble p { margin: 0 0 6px; }
+  .claude-bubble p:last-child { margin-bottom: 0; }
+  .claude-bubble strong { font-weight: 700; }
+  .claude-bubble code {
+    background: rgba(30,58,47,0.1); padding: 1px 5px;
+    border-radius: 4px; font-size: 0.8rem; font-family: monospace;
+  }
+  .claude-bubble pre {
+    background: #1a1a1a; color: #f0d58a;
+    padding: 10px; border-radius: 8px; overflow-x: auto;
+    margin: 6px 0; font-size: 0.78rem;
+  }
+  .claude-bubble pre code { background: none; color: inherit; padding: 0; }
+  .claude-bubble ul, .claude-bubble ol { padding-left: 16px; margin: 4px 0; }
+  .claude-bubble li { margin: 2px 0; }
+
+  .claude-typing {
+    display: flex; gap: 4px; align-items: center; padding: 2px 0;
+  }
+  .claude-typing span {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--gold); opacity: 0.4;
+    animation: typDot 1.2s infinite;
+  }
+  .claude-typing span:nth-child(2) { animation-delay: 0.2s; background: var(--forest); }
+  .claude-typing span:nth-child(3) { animation-delay: 0.4s; background: var(--rust); }
+  @keyframes typDot {
+    0%,100% { opacity:0.3; transform:translateY(0); }
+    50% { opacity:1; transform:translateY(-4px); }
+  }
+
+  /* Input bar */
+  .claude-input-bar {
+    padding: 0.75rem;
+    background: var(--warm);
+    border-top: 1px solid rgba(201,168,76,0.2);
+    display: flex; gap: 0.5rem; align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .claude-textarea {
+    flex: 1; resize: none; border: 1.5px solid rgba(30,58,47,0.2);
+    border-radius: 10px; padding: 0.55rem 0.8rem;
+    font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    background: var(--white); color: var(--ink);
+    outline: none; min-height: 38px; max-height: 120px;
+    transition: border-color 0.2s; line-height: 1.5;
+  }
+  .claude-textarea:focus { border-color: var(--forest); }
+  .claude-textarea::placeholder { color: var(--muted); }
+  .claude-send-btn {
+    width: 38px; height: 38px; flex-shrink: 0;
+    background: var(--forest); color: var(--gold-light);
+    border: none; border-radius: 10px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; transition: all 0.2s;
+  }
+  .claude-send-btn:hover { background: var(--forest-light); transform: scale(1.05); }
+  .claude-send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ─── FEATURES SECTION ─── */
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem; margin-top: 3rem;
+  }
+
+  .feature-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid rgba(201,168,76,0.2);
+    transition: all 0.3s; position: relative; overflow: hidden;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--forest), var(--gold));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px var(--shadow); }
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    width: 48px; height: 48px;
+    background: rgba(30,58,47,0.08); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 1rem;
+  }
+
+  .feature-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; font-weight: 700; color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+  .feature-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ─── BOOKS PREVIEW on HOME ─── */
+  .books-home-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.25rem; margin-top: 2.5rem;
+  }
+
+  .home-book-card {
+    background: var(--white);
+    border-radius: 10px; overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.07);
+    cursor: pointer; transition: all 0.3s;
+  }
+  .home-book-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px var(--shadow); }
+
+  .home-book-cover {
+    height: 120px;
+    position: relative; overflow: hidden;
+  }
+  .home-book-meta { padding: 0.75rem; }
+  .home-book-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.82rem; font-weight: 700; color: var(--ink); line-height: 1.3;
+  }
+  .home-book-author { font-size: 0.7rem; color: var(--muted); margin-top: 0.25rem; }
+
+  .view-all-btn {
+    display: block; text-align: center;
+    margin: 2rem auto 0;
+    padding: 0.8rem 2.5rem;
+    background: transparent; border: 2px solid var(--forest);
+    color: var(--forest); border-radius: 100px;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600;
+    transition: all 0.25s; width: fit-content;
+  }
+  .view-all-btn:hover { background: var(--forest); color: var(--gold-light); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--forest);
+    padding: 3rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 900; color: var(--gold-light);
+  }
+  .footer-copy { font-size: 0.8rem; color: rgba(240,213,138,0.5); }
+
+  /* ─── FLOATING AI BUTTON ─── */
+  .fab-ai {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 150;
+    width: 60px; height: 60px;
+    background: var(--forest);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 20px rgba(30,58,47,0.4);
+    transition: all 0.3s;
+    animation: fabPulse 3s infinite;
+  }
+  .fab-ai:hover { transform: scale(1.1); box-shadow: 0 8px 32px rgba(30,58,47,0.5); }
+  @keyframes fabPulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(30,58,47,0.4), 0 0 0 0 rgba(201,168,76,0.4); }
+    50% { box-shadow: 0 4px 20px rgba(30,58,47,0.4), 0 0 0 12px rgba(201,168,76,0); }
+  }
+  .fab-tooltip {
+    position: absolute; right: 70px; top: 50%;
+    transform: translateY(-50%);
+    background: var(--ink); color: white;
+    font-size: 0.75rem; font-weight: 600;
+    padding: 0.35rem 0.75rem; border-radius: 6px;
+    white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .fab-tooltip::after {
+    content: '';
+    position: absolute; left: 100%; top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-left-color: var(--ink);
+  }
+  .fab-ai:hover .fab-tooltip { opacity: 1; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { min-height: 400px; }
+    .section { padding: 3rem 2rem; }
+    .features-grid { grid-template-columns: 1fr; }
+    .search-bar-wrap { padding: 1rem 1.5rem; flex-wrap: wrap; }
+    .books-grid { padding: 1.5rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+
+  /* ─── READER PAGE ─── */
+  #reader-page { background: var(--paper); padding-top: 64px; }
+
+  .reader-topbar {
+    background: var(--forest);
+    padding: 1rem 2.5rem;
+    display: flex; align-items: center; gap: 1.25rem;
+    position: sticky; top: 64px; z-index: 50;
+  }
+  .reader-back {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold-light); border-radius: 8px;
+    padding: 0.45rem 1rem; font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;
+  }
+  .reader-back:hover { background: rgba(255,255,255,0.18); }
+  .reader-topbar-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold-light); font-size: 1.05rem; font-weight: 700;
+    flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .reader-topbar-author {
+    color: rgba(240,213,138,0.6); font-size: 0.78rem;
+  }
+  .reader-progress-wrap {
+    height: 3px; background: rgba(255,255,255,0.1);
+    position: sticky; top: calc(64px + 56px); z-index: 49;
+  }
+  .reader-progress-bar {
+    height: 100%; background: var(--gold);
+    transition: width 0.2s; width: 0%;
+  }
+
+  .reader-body {
+    max-width: 720px; margin: 0 auto;
+    padding: 3rem 2rem 6rem;
+  }
+  .reader-chapter-label {
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gold); font-weight: 700; margin-bottom: 0.5rem;
+  }
+  .reader-chapter-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700; color: var(--ink);
+    margin-bottom: 2rem; padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(201,168,76,0.25);
+  }
+  .reader-text p {
+    font-size: 1.05rem; line-height: 1.9; color: #2a2520;
+    margin-bottom: 1.4rem; text-align: justify;
+  }
+  .reader-text p:first-child::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem; font-weight: 900; color: var(--forest);
+    float: left; line-height: 0.75; margin: 0.1em 0.1em 0 0;
+  }
+  .reader-divider {
+    text-align: center; margin: 2.5rem 0; color: var(--gold);
+    font-size: 1.2rem; letter-spacing: 0.5rem;
+  }
+
+  .reader-nav-btns {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2rem 2.5rem;
+    border-top: 1px solid rgba(201,168,76,0.2);
+    max-width: 720px; margin: 0 auto;
+    gap: 1rem;
+  }
+  .reader-nav-btn {
+    background: var(--forest); color: var(--gold-light);
+    border: none; border-radius: 10px; padding: 0.65rem 1.5rem;
+    font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .reader-nav-btn:hover { background: var(--forest-light); }
+  .reader-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .reader-page-indicator {
+    font-size: 0.82rem; color: var(--muted); font-weight: 500;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Nex<span>Lib</span></div>
+  <div class="nav-links">
+    <button class="nav-link active-link" id="nav-home" onclick="showPage('home')">Home</button>
+    <button class="nav-link" id="nav-browse" onclick="showPage('browse')">Browse Books</button>
+    <button class="nav-link" onclick="scrollToSection('features')">Features</button>
+    <button class="ai-btn-nav" onclick="openAI()">✦ Ask AI</button>
+  </div>
+</nav>
+
+<!-- ══════════════ HOME PAGE ══════════════ -->
+<div id="home-page" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">
+        <div class="eyebrow-dot"></div>
+        Smart Learning · 2024
+      </div>
+      <h1 class="hero-title">
+        Your <em>Digital</em><br>Library for<br>Every Student
+      </h1>
+      <p class="hero-sub">
+        Thousands of books at your fingertips. Search, read, and learn — powered by an intelligent AI assistant ready to answer your every question.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="showPage('browse')">📚 Browse Books</button>
+        <button class="btn-outline" onclick="openAI()">✦ Ask AI Tutor</button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">2,400+</div>
+          <div class="stat-label">Books Available</div>
+        </div>
+        <div>
+          <div class="stat-num">18</div>
+          <div class="stat-label">Subject Categories</div>
+        </div>
+        <div>
+          <div class="stat-num">24/7</div>
+          <div class="stat-label">AI Assistance</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-pattern"></div>
+      <div class="books-showcase">
+        <div class="book-spine bs-1" onclick="showPage('browse')">
+          <div class="bs-genre">Physics</div>
+          <div class="bs-title">Concepts of Modern Physics</div>
+          <div class="bs-author">Arthur Beiser</div>
+        </div>
+        <div class="book-spine bs-2" onclick="showPage('browse')">
+          <div class="bs-genre">Mathematics</div>
+          <div class="bs-title">Calculus: Early Transcendentals</div>
+          <div class="bs-author">James Stewart</div>
+        </div>
+        <div class="book-spine bs-3" onclick="showPage('browse')">
+          <div class="bs-genre">Programming</div>
+          <div class="bs-title">Clean Code</div>
+          <div class="bs-author">Robert C. Martin</div>
+        </div>
+        <div class="book-spine bs-4" onclick="showPage('browse')">
+          <div class="bs-genre">Chemistry</div>
+          <div class="bs-title">Organic Chemistry</div>
+          <div class="bs-author">Paula Y. Bruice</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features" style="background: var(--warm);">
+    <div class="section-label">What We Offer</div>
+    <h2 class="section-title">Everything a Smart<br>Student Needs</h2>
+    <p class="section-sub">From textbooks to AI tutoring, NexLib is built to supercharge your learning journey.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📖</div>
+        <div class="feature-title">Vast Book Collection</div>
+        <div class="feature-desc">Thousands of textbooks, novels, research papers and guides across every subject — all in one place.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-title">Smart Search</div>
+        <div class="feature-desc">Search by title, author, genre or subject. Filter results instantly with our lightning-fast search engine.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✦</div>
+        <div class="feature-title">AI Study Tutor</div>
+        <div class="feature-desc">Ask our AI anything — homework help, concept explanations, essay feedback, or exam prep. Available 24/7.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎓</div>
+        <div class="feature-title">Student-Focused</div>
+        <div class="feature-desc">Curated collections for high school, undergraduate, and postgraduate students across all disciplines.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">Read Anywhere</div>
+        <div class="feature-desc">Access your library from any device. Pick up right where you left off on mobile, tablet, or desktop.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔖</div>
+        <div class="feature-title">Bookmarks & Notes</div>
+        <div class="feature-desc">Save your favorite books, highlight passages and take notes as you read to build a personal study hub.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKS PREVIEW -->
+  <section class="section">
+    <div class="section-label">Featured Books</div>
+    <h2 class="section-title">Popular in Your Library</h2>
+    <p class="section-sub">Handpicked books loved by thousands of students around the world.</p>
+    <div class="books-home-grid" id="home-books-preview"></div>
+    <button class="view-all-btn" onclick="showPage('browse')">View All Books →</button>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">NexLib</div>
+    <div class="footer-copy">© 2024 NexLib — Smart Library for Students</div>
+  </footer>
+</div>
+
+<!-- ══════════════ BROWSE PAGE ══════════════ -->
+<div id="browse-page" class="page">
+  <div class="browse-header">
+    <h2 class="browse-title">📚 Browse the Collection</h2>
+    <p class="browse-sub">Explore our full library — use filters to find your perfect book</p>
+  </div>
+
+  <div class="search-bar-wrap">
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        id="search-input"
+        placeholder="Search by title, author, or subject..."
+        oninput="filterBooks()"
+      >
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="setFilter('All', this)">All</button>
+      <button class="filter-tab" onclick="setFilter('Science', this)">Science</button>
+      <button class="filter-tab" onclick="setFilter('Math', this)">Math</button>
+      <button class="filter-tab" onclick="setFilter('Programming', this)">Tech</button>
+      <button class="filter-tab" onclick="setFilter('Literature', this)">Literature</button>
+      <button class="filter-tab" onclick="setFilter('History', this)">History</button>
+    </div>
+  </div>
+
+  <div class="books-grid" id="books-grid"></div>
+</div>
+
+<!-- ══════════════ READER PAGE ══════════════ -->
+<div id="reader-page" class="page">
+  <div id="reader-content"></div>
+</div>
+
+<!-- ══════════════ CLAUDE AI SIDE PANEL ══════════════ -->
+<div class="gemini-panel" id="gemini-panel">
+  <div class="gemini-panel-header">
+    <div class="gemini-header-left">
+      <div class="gemini-logo">✦</div>
+      <div>
+        <div class="gemini-title">Claude AI Tutor</div>
+        <div class="gemini-sub">Powered by Anthropic Claude</div>
+      </div>
+    </div>
+    <button class="gemini-close" onclick="closeAI()">✕</button>
+  </div>
+
+  <div class="claude-messages" id="claude-messages">
+    <div class="claude-welcome" id="claude-welcome">
+      <div class="claude-welcome-icon">✦</div>
+      <div class="claude-welcome-title">Claude AI Tutor</div>
+      <div class="claude-welcome-desc">Koi bhi sawal poochein — books, subjects, homework, ya kuch bhi!</div>
+      <div class="claude-chip-row">
+        <span class="claude-chip" onclick="claudeQuick(this)">Newton's Laws explain karo</span>
+        <span class="claude-chip" onclick="claudeQuick(this)">Photosynthesis kya hai?</span>
+        <span class="claude-chip" onclick="claudeQuick(this)">Python kaise seekhein?</span>
+        <span class="claude-chip" onclick="claudeQuick(this)">Essay likhne ka tarika</span>
+        <span class="claude-chip" onclick="claudeQuick(this)">Exam preparation tips</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="claude-input-bar">
+    <textarea class="claude-textarea" id="claude-input" placeholder="Apna sawal yahan likhein..." rows="1"></textarea>
+    <button class="claude-send-btn" id="claude-send" onclick="claudeSend()">&#10148;</button>
+  </div>
+  <div style="display:none">
+    <a href="https://gemini.google.com/app?q=Explain+calculus+derivatives+easily" target="_blank" class="gemini-shortcut">Calculus</a>
+  </div>
+</div>
+
+<!-- ══════════════ FLOATING AI BUTTON ══════════════ -->
+<button class="fab-ai" onclick="openAI()" title="Ask AI">
+  <span>✦</span>
+  <div class="fab-tooltip">Ask AI Tutor</div>
+</button>
+
+<script>
+const BOOKS = [
+  { id:1, title:"Concepts of Modern Physics", author:"Arthur Beiser", genre:"Science", color:"#1e3a2f", tag:"Physics" },
+  { id:2, title:"Calculus: Early Transcendentals", author:"James Stewart", color:"#7c3a2a", genre:"Math", tag:"Calculus" },
+  { id:3, title:"Clean Code", author:"Robert C. Martin", color:"#2a3a7c", genre:"Programming", tag:"Software" },
+  { id:4, title:"Organic Chemistry", author:"Paula Y. Bruice", color:"#4a2a7c", genre:"Science", tag:"Chemistry" },
+  { id:5, title:"Pride and Prejudice", author:"Jane Austen", color:"#7c2a4a", genre:"Literature", tag:"Classic" },
+  { id:6, title:"A Brief History of Time", author:"Stephen Hawking", color:"#1a4a5a", genre:"Science", tag:"Cosmology" },
+  { id:7, title:"Introduction to Algorithms", author:"Cormen et al.", color:"#3a4a1a", genre:"Programming", tag:"Algorithms" },
+  { id:8, title:"The History of Rome", author:"Theodor Mommsen", color:"#5a3a1a", genre:"History", tag:"Ancient" },
+  { id:9, title:"Linear Algebra Done Right", author:"Sheldon Axler", color:"#1a3a5a", genre:"Math", tag:"Algebra" },
+  { id:10, title:"The Great Gatsby", author:"F. Scott Fitzgerald", color:"#5a1a2a", genre:"Literature", tag:"Novel" },
+  { id:11, title:"Biochemistry Essentials", author:"Jeremy Berg", color:"#1a5a3a", genre:"Science", tag:"Biology" },
+  { id:12, title:"World History: Patterns", author:"Roger Beck", color:"#4a3a1a", genre:"History", tag:"Global" },
+  { id:13, title:"Python Crash Course", author:"Eric Matthes", color:"#1a4a2a", genre:"Programming", tag:"Python" },
+  { id:14, title:"Discrete Mathematics", author:"Kenneth Rosen", color:"#2a1a5a", genre:"Math", tag:"Logic" },
+  { id:15, title:"1984", author:"George Orwell", color:"#3a1a1a", genre:"Literature", tag:"Dystopia" },
+  { id:16, title:"Thermodynamics", author:"Cengel & Boles", color:"#5a2a1a", genre:"Science", tag:"Physics" },
+];
+
+let currentFilter = 'All';
+
+function renderBooks(books, containerId) {
+  const grid = document.getElementById(containerId);
+  if (!books.length) {
+    grid.innerHTML = `<div class="no-results"><div class="no-results-icon">📭</div><p>No books found. Try a different search.</p></div>`;
+    return;
+  }
+  grid.innerHTML = books.map(b => `
+    <div class="book-card">
+      <div class="book-cover">
+        <div class="book-cover-bg" style="background:${b.color}"></div>
+        <div class="book-cover-pattern"></div>
+        <div class="book-cover-title">${b.title}</div>
+      </div>
+      <div class="book-meta">
+        <div class="book-author-name">by ${b.author}</div>
+        <div class="book-tags"><span class="book-tag">${b.tag}</span></div>
+        <button class="book-read-btn" onclick="openBook(${b.id})">Read Now</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderHomePreview() {
+  const preview = BOOKS.slice(0, 8);
+  const grid = document.getElementById('home-books-preview');
+  grid.innerHTML = preview.map(b => `
+    <div class="home-book-card" onclick="openBook(${b.id})">
+      <div class="home-book-cover">
+        <div class="book-cover-bg" style="background:${b.color}; position:absolute;inset:0;"></div>
+        <div class="book-cover-pattern" style="position:absolute;inset:0;opacity:0.15;background-image:repeating-linear-gradient(60deg,rgba(255,255,255,0.5) 0,rgba(255,255,255,0.5) 1px,transparent 0,transparent 50%);background-size:14px 14px;"></div>
+      </div>
+      <div class="home-book-meta">
+        <div class="home-book-title">${b.title}</div>
+        <div class="home-book-author">${b.author}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterBooks() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  let filtered = BOOKS;
+  if (currentFilter !== 'All') filtered = filtered.filter(b => b.genre === currentFilter);
+  if (q) filtered = filtered.filter(b =>
+    b.title.toLowerCase().includes(q) ||
+    b.author.toLowerCase().includes(q) ||
+    b.tag.toLowerCase().includes(q)
+  );
+  renderBooks(filtered, 'books-grid');
+}
+
+function setFilter(filter, el) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  filterBooks();
+}
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(page + '-page').classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active-link'));
+  const nl = document.getElementById('nav-' + page);
+  if (nl) nl.classList.add('active-link');
+  window.scrollTo(0, 0);
+  if (page === 'browse') renderBooks(BOOKS, 'books-grid');
+}
+
+function scrollToSection(id) {
+  if (document.getElementById('home-page').classList.contains('active')) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+  } else {
+    showPage('home');
+    setTimeout(() => document.getElementById(id).scrollIntoView({ behavior: 'smooth' }), 300);
+  }
+}
+
+// ─── GEMINI PANEL ───
+function openAI() {
+  document.getElementById('gemini-panel').classList.add('open');
+}
+function closeAI() {
+  document.getElementById('gemini-panel').classList.remove('open');
+}
+
+// ─── BOOK CONTENT ───
+const BOOK_CONTENT = {
+  1: { chapters: [
+    { title:"Wave-Particle Duality", text:`The dawn of modern physics brought with it one of the most unsettling discoveries in the history of science: light and matter possess a dual nature, behaving sometimes as waves and sometimes as particles, depending on how they are observed.
+
+In 1905, Albert Einstein proposed that electromagnetic radiation is quantized into discrete packets of energy called photons. Each photon carries energy proportional to its frequency — a relationship described by the famous equation E = hf, where h is Planck's constant.
+
+The implications of this discovery were profound. If light — long considered a wave phenomenon — could behave as a particle, then perhaps particles could behave as waves. This hypothesis was confirmed in 1927 when electrons were shown to produce interference patterns, a hallmark of wave behavior.
+
+The de Broglie wavelength relates the momentum of any particle to its corresponding wave: λ = h/p. For everyday objects, this wavelength is vanishingly small. But for electrons and subatomic particles, quantum effects become dominant and unavoidable.` },
+    { title:"The Heisenberg Uncertainty Principle", text:`One of the cornerstones of quantum mechanics is the Heisenberg Uncertainty Principle, formulated by Werner Heisenberg in 1927. It states that the position and momentum of a particle cannot both be known with arbitrary precision simultaneously.
+
+Mathematically: Δx · Δp ≥ ℏ/2, where ℏ is the reduced Planck's constant. This is not a limitation of our measuring instruments — it is a fundamental property of nature itself.
+
+The more precisely we know a particle's position, the less precisely we can know its momentum, and vice versa. This principle shattered the classical dream of a perfectly deterministic universe.
+
+A similar relationship exists between energy and time: ΔE · Δt ≥ ℏ/2. This explains virtual particles, quantum tunneling, and the natural linewidth of spectral lines — phenomena that have no classical explanation but are confirmed by experiment to extraordinary precision.` }
+  ]},
+  2: { chapters: [
+    { title:"Limits and Continuity", text:`The concept of a limit is the foundation upon which all of calculus rests. Intuitively, the limit of a function f(x) as x approaches a value c is the value that f(x) gets arbitrarily close to as x gets arbitrarily close to c.
+
+Formally, we write: lim(x→c) f(x) = L, which means for every ε > 0, there exists a δ > 0 such that whenever 0 < |x - c| < δ, we have |f(x) - L| < ε. This epsilon-delta definition, though abstract, gives calculus its logical rigor.
+
+A function is continuous at a point c if three conditions hold: f(c) is defined, the limit exists as x approaches c, and the limit equals f(c). Continuous functions have beautiful properties — they satisfy the Intermediate Value Theorem, meaning they take on every value between any two of their values.
+
+Polynomials are continuous everywhere. Rational functions are continuous wherever their denominators are nonzero. The trigonometric, exponential, and logarithmic functions are each continuous on their respective domains.` },
+    { title:"Differentiation Rules", text:`The derivative of a function measures its instantaneous rate of change. If f(x) represents position, then f'(x) represents velocity, and f''(x) represents acceleration. This connection to physical intuition made calculus the language of science.
+
+The power rule states: d/dx[xⁿ] = nxⁿ⁻¹. Combined with the sum rule, this lets us differentiate any polynomial instantly.
+
+The chain rule is perhaps the most powerful tool: d/dx[f(g(x))] = f'(g(x)) · g'(x). It allows us to differentiate composite functions by working from the outside in.
+
+The product and quotient rules complete the toolkit: d/dx[fg] = f'g + fg', and d/dx[f/g] = (f'g - fg')/g². Armed with these rules, any differentiable function can be analyzed for its behavior, extrema, and rate of change.` }
+  ]},
+  3: { chapters: [
+    { title:"What is Clean Code?", text:`Writing code is easy. Writing clean code — code that other humans can read, understand, and maintain — is one of the most valuable and underappreciated skills in software engineering.
+
+Clean code reads like well-written prose. Each function does one thing and does it well. Variables have meaningful names that reveal their intent. Comments explain why, not what. The code itself communicates clearly enough that comments are rarely needed.
+
+Bad code, by contrast, is characterized by long functions that do many things, cryptic variable names like 'd' or 'temp', deeply nested conditionals, and duplicated logic scattered across files. This is what programmers call "technical debt."
+
+The Boy Scout Rule applies: always leave the codebase cleaner than you found it. Every small improvement — renaming a variable, extracting a function, removing a comment — adds up. Code quality is not a one-time achievement but a continuous discipline.` },
+    { title:"Meaningful Names", text:`The hardest thing in computer science, some say, is naming things. A good name eliminates the need for a comment, conveys intent instantly, and makes code self-documenting.
+
+Use intention-revealing names. The variable 'd' tells us nothing. But 'daysSinceLastModification' tells us exactly what it holds and why it exists. The few extra keystrokes are an investment that pays compound interest every time the code is read.
+
+Avoid disinformation. Don't name a variable 'accountList' if it is not actually a List data structure. Don't use names that are subtly misleading or that look similar to other names in the codebase.
+
+Make meaningful distinctions. If you have two functions, don't name them 'getActiveAccount' and 'getActiveAccountInfo' — the difference is invisible. Choose names that clearly explain how one differs from the other. Consistency in naming conventions is a gift to every future reader of your code.` }
+  ]},
+  4: { chapters: [
+    { title:"Structure of Organic Molecules", text:`Organic chemistry is the study of carbon-containing compounds — a domain that encompasses millions of known substances and underpins all of life itself. Carbon's unique ability to form four stable covalent bonds and bond to itself in long chains makes this diversity possible.
+
+The structural formula of an organic molecule shows every atom and bond explicitly. Condensed structural formulas save space by grouping atoms. Line-angle structures go further, representing carbon skeletons as zigzag lines where each vertex and endpoint represents a carbon atom.
+
+Functional groups are specific arrangements of atoms that confer characteristic chemical behavior. Alcohols contain the -OH group. Carboxylic acids contain -COOH. Amines contain nitrogen. Knowing a molecule's functional groups allows chemists to predict its reactivity before ever conducting an experiment.
+
+Isomers are molecules with the same molecular formula but different structural arrangements. Constitutional isomers differ in connectivity. Stereoisomers have the same connectivity but differ in spatial arrangement — a distinction that can mean the difference between a life-saving drug and a toxic one.` }
+  ]},
+  5: { chapters: [
+    { title:"It is a Truth Universally Acknowledged", text:`It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife. However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.
+
+"My dear Mr. Bennet," said his lady to him one day, "have you heard that Netherfield Park is let at last?"
+
+Mr. Bennet replied that he had not.
+
+"But it is," returned she; "for Mrs. Long has just been here, and she told me all about it."
+
+Mr. Bennet made no answer.
+
+"Do not you want to know who has taken it?" cried his wife impatiently. "You want to tell me, and I have no objection to hearing it." This was invitation enough.` },
+    { title:"Mr. Bingley Arrives", text:`Mr. Bennet was among the earliest of his neighbours in calling upon Mr. Bingley, and a liberal man was he in his offers of help and counsel. He had always intended to visit, though to the last always assuring his wife that he should not go; and till the evening after the visit was paid, she had no knowledge of it.
+
+It was not till the evening of that day that she fully understood that Mr. Bennet had indeed gone to call upon him, and had secured the good opinion of the neighbourhood by the civility of his behaviour and the pleasantness of his address.
+
+The girls were at that time attending their aunt's, and Mr. Bingley was quickly declared the most eligible bachelor in the county. His estate at Netherfield Park was reported to be five thousand a year — a sum that set every mother in Hertfordshire to scheming and planning with renewed vigour.` }
+  ]},
+  6: { chapters: [
+    { title:"Our Picture of the Universe", text:`A well-known scientist once gave a public lecture on astronomy. He described how the earth orbits around the sun and how the sun, in turn, orbits around the center of a vast collection of stars called our galaxy.
+
+At the end of the lecture, a little old lady at the back of the room got up and said: "What you have told us is rubbish. The world is really a flat plate supported on the back of a giant tortoise."
+
+The scientist smiled before replying, "What is the tortoise standing on?" "You're very clever, young man, very clever," said the old lady. "But it's turtles all the way down!"
+
+Most people would find the picture of our universe as an infinite tower of tortoises rather ridiculous, but why do we think we know better? Our theories of the universe have evolved from the ancient Greek picture of a small earth-centered cosmos to our current understanding of a universe some fourteen billion years old and ninety-three billion light-years across.` }
+  ]},
+  7: { chapters: [
+    { title:"The Role of Algorithms", text:`Before there were computers, there were algorithms. An algorithm is a finite sequence of well-defined instructions for solving a problem or accomplishing a task. The word itself derives from the name of the ninth-century mathematician Muhammad ibn Musa al-Khwarizmi, whose work on arithmetic laid foundations for algebra.
+
+The study of algorithms asks two fundamental questions: correctness and efficiency. Does the algorithm always produce the right answer? And how does its running time grow as the input size increases?
+
+The notation O(f(n)) — "big-O" — describes the asymptotic upper bound on an algorithm's growth rate. An O(n) algorithm scales linearly. An O(n²) algorithm becomes painfully slow for large inputs. An O(log n) algorithm — like binary search — is so efficient it can search a billion items in about thirty steps.
+
+Algorithms are the invisible machinery of modern civilization. They route your internet traffic, compress your photos, recommend your next video, and power the search engines that index the world's knowledge.` }
+  ]},
+  8: { chapters: [
+    { title:"The Founding of Rome", text:`The origins of Rome are shrouded in legend. The Romans themselves told the story of Romulus and Remus — twin brothers suckled by a she-wolf, descendants of the Trojan hero Aeneas — who founded the city on the Palatine Hill in 753 BCE.
+
+Modern archaeology tells a different story. Latin-speaking peoples settled the hills along the Tiber River in the tenth century BCE. By the eighth century, these settlements had coalesced into a single community. The strategic location — a river crossing, hills for defense, fertile plains — was no accident.
+
+The early Romans were farmers and herders, organized into a strict social hierarchy of patricians and plebeians. Their political structure evolved from monarchy through republic to empire over the course of a thousand years — a story of extraordinary institutional adaptability.
+
+The Roman Kingdom, traditionally dated 753–509 BCE, was ruled by seven kings. The last, Tarquinius Superbus, was overthrown in a revolt that established the Roman Republic — an event so foundational that Romans dated their calendar from it for centuries.` }
+  ]},
+  9: { chapters: [
+    { title:"Vector Spaces", text:`Linear algebra begins with the concept of a vector space — an abstract algebraic structure that generalizes our intuition about arrows in the plane and in three-dimensional space.
+
+A vector space V over a field F is a set equipped with two operations: addition of vectors, and multiplication of vectors by scalars from F. These operations must satisfy eight axioms: commutativity and associativity of addition, existence of additive identity and inverses, distributivity of scalar multiplication over both vector and scalar addition, and compatibility of scalar multiplication with field multiplication.
+
+The power of this abstraction is that it applies equally to familiar geometric vectors, to polynomials, to continuous functions, to matrices, and to many other mathematical objects. Once we prove a theorem about vector spaces in general, it applies to all of these at once.
+
+The concepts of linear independence, span, and basis give us the tools to understand the structure of any vector space. The dimension of a vector space is the size of any of its bases — a number that captures the space's essential complexity in a single integer.` }
+  ]},
+  10: { chapters: [
+    { title:"In My Younger and More Vulnerable Years", text:`In my younger and more vulnerable years my father gave me some advice that I've been turning over in my mind ever since.
+
+"Whenever you feel like criticizing any one," he told me, "just remember that all the people in this world haven't had the advantages that you've had."
+
+He didn't say any more, but we've always been unusually communicative in a reserved way, and I understood that he meant a great deal more than that. In consequence, I'm inclined to reserve all judgments, a habit that has opened up many curious natures to me and also made me the victim of not a few veteran bores.
+
+And so it came about that in the summer of 1922 I set out for the East, not to go to Wall Street as my father expected, but to learn the bond business. I ended up renting a house in West Egg, the less fashionable of the two, an eyesore, but it was a small eyesore, overlooking the water in a cheerful red-and-white Georgian Colonial mansion.` }
+  ]},
+  11: { chapters: [
+    { title:"The Chemistry of Life", text:`Life is chemistry — extraordinarily complex, precisely regulated, and breathtakingly elegant chemistry. Biochemistry is the science that unravels these molecular stories, revealing how the atoms in our food become the energy that powers our thoughts, movements, and very existence.
+
+The cell is the fundamental unit of life. Within each of your thirty-seven trillion cells, thousands of chemical reactions occur every second. These reactions are catalyzed by enzymes — protein molecules that accelerate reactions by factors of millions without being consumed themselves.
+
+The four major classes of biomolecules are carbohydrates, lipids, proteins, and nucleic acids. Carbohydrates store and transport energy. Lipids form membranes and store energy long-term. Proteins do virtually everything else — structural support, catalysis, signaling, transport, defense.
+
+DNA, the master molecule of heredity, stores information in the sequence of its four bases: adenine, thymine, guanine, and cytosine. The central dogma of molecular biology describes the flow of this information: DNA is transcribed into RNA, which is translated into protein.` }
+  ]},
+  12: { chapters: [
+    { title:"Early Human Civilizations", text:`The story of humanity stretches back some three hundred thousand years, to the emergence of anatomically modern humans in Africa. For most of that time, our ancestors lived as hunter-gatherers — small, mobile bands that followed game and gathered wild plants.
+
+Then, roughly twelve thousand years ago, something changed. In several places around the world — the Fertile Crescent, China, Mesoamerica, the Andes — people independently began to cultivate plants and domesticate animals. This Neolithic Revolution was perhaps the most consequential development in human history.
+
+Agriculture enabled surplus food, which enabled specialization, which enabled cities. The first urban civilizations arose in Mesopotamia around 3500 BCE, in Egypt around 3100 BCE, in the Indus Valley around 2600 BCE, and in China around 1600 BCE. Each developed writing, monumental architecture, long-distance trade, and complex social hierarchies.
+
+These early civilizations were not isolated. Trade networks connected them across vast distances. Ideas, technologies, crops, and diseases spread along these routes, weaving the separate stories of humanity into an increasingly interconnected tapestry.` }
+  ]},
+  13: { chapters: [
+    { title:"Getting Started with Python", text:`Python is a programming language that prioritizes readability, simplicity, and elegance. Created by Guido van Rossum and first released in 1991, Python was designed with a single governing philosophy: code should be easy to read and write, almost like pseudocode that actually runs.
+
+Installing Python is straightforward. Visit python.org and download the latest version. The installation includes IDLE, a simple integrated development environment, and the Python interpreter itself. Once installed, you can type 'python' at a command prompt to enter the interactive interpreter.
+
+Your first Python program is traditionally "Hello, World!" — and in Python, it requires exactly one line: print("Hello, World!"). Compare this to Java, which requires ten lines, or C, which requires five. Python's brevity is not laziness — it is design.
+
+Variables in Python require no type declaration. x = 5 creates an integer. x = "hello" makes it a string. Python is dynamically typed, meaning types are associated with values, not variables. This flexibility speeds up development and makes exploratory programming a joy.` },
+    { title:"Lists, Loops, and Functions", text:`Lists are Python's most versatile built-in data structure. A list is an ordered, mutable collection of items: fruits = ["apple", "banana", "cherry"]. Lists can contain items of any type, including other lists.
+
+Loops allow you to repeat code. The for loop iterates over any sequence: for fruit in fruits: print(fruit). The while loop repeats as long as a condition is true. Python's for loop is elegant because it iterates over the items directly, not over indices — a design choice that makes code more readable.
+
+Functions are reusable blocks of code defined with the def keyword. A well-designed function does one thing, takes clearly named parameters, and returns a meaningful value. Functions are the primary tool for avoiding code duplication and organizing programs into manageable pieces.
+
+List comprehensions are a distinctly Pythonic feature: squares = [x**2 for x in range(10)] creates a list of squares in a single, readable line. They combine loops and conditionals into a compact, expressive syntax that experienced Python programmers use constantly.` }
+  ]},
+  14: { chapters: [
+    { title:"Logic and Proofs", text:`Mathematics is distinguished from other disciplines by its standard of proof. A mathematical truth, once proven, is absolute — not merely very likely, but certain, for all time. Understanding how proofs work is therefore central to mathematical education.
+
+A proposition is a statement that is either true or false. Propositional logic studies how propositions combine through connectives: and (∧), or (∨), not (¬), implies (→), and if and only if (↔). Truth tables systematically evaluate the truth value of compound propositions.
+
+A direct proof establishes a conclusion by a chain of logical deductions from axioms and previously proven theorems. A proof by contradiction assumes the negation of what we wish to prove and derives a logical impossibility. A proof by induction proves a statement for all natural numbers by establishing a base case and an inductive step.
+
+The beauty of mathematical proof is its universality. The proof that there are infinitely many prime numbers, written by Euclid around 300 BCE, is as valid today as when it was written. No experiment can refute it; no new data can overturn it.` }
+  ]},
+  15: { chapters: [
+    { title:"It Was a Bright Cold Day in April", text:`It was a bright cold day in April, and the clocks were striking thirteen. Winston Smith, his chin nuzzled into his breast in an effort to escape the vile wind, slipped quickly through the glass doors of Victory Mansions, though not quickly enough to prevent a swirl of gritty dust from entering along with him.
+
+The hallway smelt of boiled cabbage and old rag mats. At one end of it a coloured poster, too large for the hallway, had been tacked to the wall. It depicted simply an enormous face, more than a metre wide: the face of a man of about forty-five, with a heavy black moustache and ruggedly handsome features.
+
+Winston made for the stairs. It was no use trying the lift. Even at the best of times it was seldom working, and at present the electric current was cut off during daylight hours. It was part of the economy drive in preparation for Hate Week.
+
+The flat was seven flights up, and Winston, who was thirty-nine and had a varicose ulcer above his right ankle, went slowly, resting several times on the way. On each landing, opposite the lift-shaft, the poster with the enormous face gazed from the wall. It was one of those pictures which are so contrived that the eyes follow you about when you move.` }
+  ]},
+  16: { chapters: [
+    { title:"Basic Concepts of Thermodynamics", text:`Thermodynamics is the science of energy — its forms, its transformations, and the limits imposed on those transformations by the fundamental laws of nature. From the engines that power our civilization to the metabolic processes of living cells, thermodynamics governs them all.
+
+The zeroth law of thermodynamics defines temperature: if two systems are each in thermal equilibrium with a third system, they are in thermal equilibrium with each other. This seemingly obvious statement is the logical foundation for the concept of temperature as a property.
+
+The first law states that energy is conserved. Energy can change form — from thermal to mechanical, from chemical to electrical — but it cannot be created or destroyed. The total energy of an isolated system remains constant: ΔU = Q - W, where U is internal energy, Q is heat added to the system, and W is work done by the system.
+
+The second law introduces entropy — a measure of disorder or unavailability of energy. In any spontaneous process, the total entropy of the universe increases. Heat flows naturally from hot to cold. Disorder tends to increase. Perfect efficiency is impossible. The second law sets the arrow of time.` }
+  ]}
+};
+
+function openBook(id) {
+  const book = BOOKS.find(b => b.id === id);
+  if (!book) return;
+  const content = BOOK_CONTENT[id] || { chapters: [{ title: book.title, text: 'Full content coming soon. Check back later!' }] };
+
+  let currentChapter = 0;
+  const totalChapters = content.chapters.length;
+
+  function renderChapter(idx) {
+    const ch = content.chapters[idx];
+    const progress = ((idx + 1) / totalChapters) * 100;
+    const paragraphs = ch.text.split('\n\n').map(p => `<p>${p}</p>`).join('');
+    document.getElementById('reader-content').innerHTML = `
+      <div class="reader-topbar">
+        <button class="reader-back" onclick="showPage('browse')">← Back</button>
+        <div style="flex:1;min-width:0;">
+          <div class="reader-topbar-title">${book.title}</div>
+          <div class="reader-topbar-author">${book.author}</div>
+        </div>
+        <div style="color:rgba(240,213,138,0.6);font-size:0.78rem;">Ch. ${idx+1}/${totalChapters}</div>
+      </div>
+      <div class="reader-progress-wrap"><div class="reader-progress-bar" style="width:${progress}%"></div></div>
+      <div class="reader-body">
+        <div class="reader-chapter-label">Chapter ${idx+1}</div>
+        <div class="reader-chapter-title">${ch.title}</div>
+        <div class="reader-text">${paragraphs}</div>
+        <div class="reader-divider">✦ ✦ ✦</div>
+      </div>
+      <div class="reader-nav-btns">
+        <button class="reader-nav-btn" ${idx===0?'disabled':''} onclick="changeChapter(${idx-1})">← Previous</button>
+        <span class="reader-page-indicator">Chapter ${idx+1} of ${totalChapters}</span>
+        <button class="reader-nav-btn" ${idx===totalChapters-1?'disabled':''} onclick="changeChapter(${idx+1})">Next →</button>
+      </div>
+    `;
+    window.scrollTo(0,0);
+  }
+
+  window.changeChapter = function(idx) {
+    currentChapter = idx;
+    renderChapter(idx);
+  };
+
+  renderChapter(0);
+  showPage('reader');
+}
+
+// ─── CLAUDE AI PANEL ───
+const CLAUDE_API_KEY = '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';
+let claudeHistory = [];
+let claudeBusy = false;
+
+function openAI() {
+  document.getElementById('gemini-panel').classList.add('open');
+  setTimeout(() => document.getElementById('claude-input').focus(), 400);
+}
+function closeAI() {
+  document.getElementById('gemini-panel').classList.remove('open');
+}
+function openBookAI(title) {
+  openAI();
+  setTimeout(() => {
+    document.getElementById('claude-input').value = 'Tell me about the book "' + title + '" — what will I learn from it?';
+    claudeSend();
+  }, 450);
+}
+
+function claudeQuick(el) {
+  document.getElementById('claude-input').value = el.textContent;
+  claudeSend();
+}
+
+function claudeRemoveWelcome() {
+  const w = document.getElementById('claude-welcome');
+  if (w) w.remove();
+}
+
+function claudeAddMsg(role, text) {
+  claudeRemoveWelcome();
+  const container = document.getElementById('claude-messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'claude-msg ' + role;
+  const av = document.createElement('div');
+  av.className = 'claude-avatar ' + role;
+  av.textContent = role === 'ai' ? '✦' : '👤';
+  const bub = document.createElement('div');
+  bub.className = 'claude-bubble';
+  if (role === 'ai') {
+    bub.innerHTML = claudeFormat(text);
+  } else {
+    bub.textContent = text;
+  }
+  wrap.appendChild(av);
+  wrap.appendChild(bub);
+  container.appendChild(wrap);
+  container.scrollTop = container.scrollHeight;
+}
+
+function claudeAddTyping() {
+  claudeRemoveWelcome();
+  const container = document.getElementById('claude-messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'claude-msg ai';
+  wrap.id = 'claude-typing';
+  wrap.innerHTML = '<div class="claude-avatar ai">✦</div><div class="claude-bubble"><div class="claude-typing"><span></span><span></span><span></span></div></div>';
+  container.appendChild(wrap);
+  container.scrollTop = container.scrollHeight;
+}
+
+function claudeRemoveTyping() {
+  const t = document.getElementById('claude-typing');
+  if (t) t.remove();
+}
+
+function claudeFormat(text) {
+  return text
+    .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^### (.+)$/gm, '<strong>$1</strong>')
+    .replace(/^## (.+)$/gm, '<strong>$1</strong>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(?!<)(.+)/gm, '<p>$1</p>')
+    .replace(/<p><\/p>/g, '');
+}
+
+async function claudeSend() {
+  if (claudeBusy) return;
+  const input = document.getElementById('claude-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('claude-send').disabled = true;
+  claudeBusy = true;
+
+  claudeAddMsg('user', text);
+  claudeHistory.push({ role: 'user', content: text });
+  claudeAddTyping();
+
+  try {
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + CLAUDE_API_KEY,
+        'HTTP-Referer': window.location.href,
+        'X-Title': 'NexLib AI Tutor'
+      },
+      body: JSON.stringify({
+        model: 'openrouter/auto',
+        max_tokens: 1024,
+        messages: [
+          { role: 'system', content: 'You are a friendly AI study tutor for NexLib, a smart digital library for students. Answer questions helpfully in the same language the user uses (Urdu, Roman Urdu, or English). Be concise but thorough. You help with books, subjects, homework, concepts, and general knowledge.' },
+          ...claudeHistory
+        ]
+      })
+    });
+
+    claudeRemoveTyping();
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'API Error ' + res.status);
+    }
+
+    const data = await res.json();
+    const reply = data.choices[0].message.content;
+    claudeHistory.push({ role: 'assistant', content: reply });
+    claudeAddMsg('ai', reply);
+
+  } catch (e) {
+    claudeRemoveTyping();
+    claudeAddMsg('ai', '⚠️ Error: ' + e.message);
+    claudeHistory.pop();
+  }
+
+  claudeBusy = false;
+  document.getElementById('claude-send').disabled = false;
+  input.focus();
+}
+
+// Auto-resize textarea
+document.addEventListener('DOMContentLoaded', () => {
+  const ta = document.getElementById('claude-input');
+  if (ta) {
+    ta.addEventListener('input', () => {
+      ta.style.height = 'auto';
+      ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+    });
+    ta.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); claudeSend(); }
+    });
+  }
+});
+
+// INIT
+renderHomePreview();
+</script>
+</body>
+</html>
